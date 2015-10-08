@@ -1,0 +1,4 @@
+firstrun-startpage.patch
+make.py.patch
+extensions_Makefile.in.patch
+revert-libvisual-hack.patch

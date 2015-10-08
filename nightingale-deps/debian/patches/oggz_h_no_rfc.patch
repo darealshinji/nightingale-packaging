@@ -1,0 +1,381 @@
+oggz.h with RFC section removed.
+
+--- /dev/null
++++ b/xulrunner-1.9.2/mozilla/media/liboggz/include/oggz/oggz.h
+@@ -0,0 +1,376 @@
++/*
++   Copyright (C) 2003 Commonwealth Scientific and Industrial Research
++   Organisation (CSIRO) Australia
++
++   Redistribution and use in source and binary forms, with or without
++   modification, are permitted provided that the following conditions
++   are met:
++
++   - Redistributions of source code must retain the above copyright
++   notice, this list of conditions and the following disclaimer.
++
++   - Redistributions in binary form must reproduce the above copyright
++   notice, this list of conditions and the following disclaimer in the
++   documentation and/or other materials provided with the distribution.
++
++   - Neither the name of CSIRO Australia nor the names of its
++   contributors may be used to endorse or promote products derived from
++   this software without specific prior written permission.
++
++   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
++   PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE ORGANISATION OR
++   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
++   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
++   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++*/
++
++#ifndef __OGGZ_H__
++#define __OGGZ_H__
++
++#include <stdio.h>
++#include <sys/types.h>
++
++#include <ogg/ogg.h>
++#include <oggz/oggz_constants.h>
++#include <oggz/oggz_table.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/** \mainpage
++ *
++ * \section intro Oggz makes programming with Ogg easy!
++ *
++ * This is the documentation for the Oggz C API. Oggz provides a simple
++ * programming interface for reading and writing Ogg files and streams.
++ * Ogg is an interleaving data container developed by Monty
++ * at <a href="http://www.xiph.org/">Xiph.Org</a>, originally to
++ * support the Ogg Vorbis audio format.
++ *
++ * liboggz supports the flexibility afforded by the Ogg file format while
++ * presenting the following API niceties:
++ *
++ * - Strict adherence to the formatting requirements of Ogg
++ *   \link basics bitstreams \endlink, to ensure that only valid bitstreams
++ *   are generated
++ * - A simple, callback based open/read/close or open/write/close
++ *   \link oggz.h interface \endlink to raw Ogg files
++ * - A customisable \link seek_api seeking \endlink abstraction for
++ *   seeking on multitrack Ogg data
++ * - A packet queue for feeding incoming packets for writing, with callback
++ *   based notification when this queue is empty
++ * - A means of overriding the \link oggz_io.h IO functions \endlink used by
++ *   Oggz, for easier integration with media frameworks and similar systems.
++ * - A handy \link oggz_table.h table \endlink structure for storing
++ *   information on each logical bitstream
++ *
++ * \subsection contents Contents
++ *
++ * - \link basics Basics \endlink:
++ * Information about Ogg required to understand liboggz
++ *
++ * - \link oggz.h oggz.h \endlink:
++ * Documentation of the Oggz C API
++ *
++ * - \link configuration Configuration \endlink:
++ * Customizing liboggz to only read or write.
++ *
++ * - \link building Building \endlink:
++ * Information related to building software that uses liboggz.
++ *
++ * \section Licensing
++ *
++ * liboggz is provided under the following BSD-style open source license:
++ *
++ * \include COPYING
++ *
++ */
++
++/** \defgroup configuration Configuration
++ * \section configure ./configure
++ *
++ * It is possible to customize the functionality of liboggz
++ * by using various ./configure flags when
++ * building it from source. You can build a smaller
++ * version of liboggz to only read or write.
++ * By default, both reading and writing support is built.
++ *
++ * For general information about using ./configure, see the file
++ * \link install INSTALL \endlink
++ *
++ * \subsection no_encode Removing writing support
++ *
++ * Configuring with \a --disable-write will remove all support for writing:
++ * - All internal write related functions will not be built
++ * - Any attempt to call oggz_new(), oggz_open() or oggz_open_stdio()
++ *   with \a flags == OGGZ_WRITE will fail, returning NULL
++ * - Any attempt to call oggz_write(), oggz_write_output(), oggz_write_feed(),
++ *   oggz_write_set_hungry_callback(), or oggz_write_get_next_page_size()
++ *   will return OGGZ_ERR_DISABLED
++ *
++ * \subsection no_decode Removing reading support
++ *
++ * Configuring with \a --disable-read will remove all support for reading:
++ * - All internal reading related functions will not be built
++ * - Any attempt to call oggz_new(), oggz_open() or oggz_open_stdio()
++ *    with \a flags == OGGZ_READ will fail, returning NULL
++ * - Any attempt to call oggz_read(), oggz_read_input(),
++ *   oggz_set_read_callback(), oggz_seek(), or oggz_seek_units() will return
++ *   OGGZ_ERR_DISABLED
++ *
++ */
++
++/** \defgroup install Installation
++ * \section install INSTALL
++ *
++ * \include INSTALL
++ */
++
++/** \defgroup building Building against liboggz
++ *
++ *
++ * \section autoconf Using GNU autoconf
++ *
++ * If you are using GNU autoconf, you do not need to call pkg-config
++ * directly. Use the following macro to determine if liboggz is
++ * available:
++ *
++ <pre>
++ PKG_CHECK_MODULES(OGGZ, oggz >= 0.6.0,
++                   HAVE_OGGZ="yes", HAVE_OGGZ="no")
++ if test "x$HAVE_OGGZ" = "xyes" ; then
++   AC_SUBST(OGGZ_CFLAGS)
++   AC_SUBST(OGGZ_LIBS)
++ fi
++ </pre>
++ *
++ * If liboggz is found, HAVE_OGGZ will be set to "yes", and
++ * the autoconf variables OGGZ_CFLAGS and OGGZ_LIBS will
++ * be set appropriately.
++ *
++ * \section pkg-config Determining compiler options with pkg-config
++ *
++ * If you are not using GNU autoconf in your project, you can use the
++ * pkg-config tool directly to determine the correct compiler options.
++ *
++ <pre>
++ OGGZ_CFLAGS=`pkg-config --cflags oggz`
++
++ OGGZ_LIBS=`pkg-config --libs oggz`
++ </pre>
++ *
++ */
++
++/** \file
++ * The liboggz C API.
++ *
++ * \section general Generic semantics
++ *
++ * All access is managed via an OGGZ handle. This can be instantiated
++ * in one of three ways:
++ *
++ * - oggz_open() - Open a full pathname
++ * - oggz_open_stdio() - Use an already opened FILE *
++ * - oggz_new() - Create an anonymous OGGZ object, which you can later
++ *   handle via memory buffers
++ *
++ * To finish using an OGGZ handle, it should be closed with oggz_close().
++ *
++ * \section reading Reading Ogg data
++ *
++ * To read from Ogg files or streams you must instantiate an OGGZ handle
++ * with flags set to OGGZ_READ, and provide an OggzReadPacket
++ * callback with oggz_set_read_callback().
++ * See the \ref read_api section for details.
++ *
++ * \section writing Writing Ogg data
++ *
++ * To write to Ogg files or streams you must instantiate an OGGZ handle
++ * with flags set to OGGZ_WRITE, and provide an OggzWritePacket
++ * callback with oggz_set_write_callback().
++ * See the \ref write_api section for details.
++ *
++ * \section seeking Seeking on Ogg data
++ *
++ * To seek while reading Ogg files or streams you must instantiate an OGGZ
++ * handle for reading, and ensure that an \link metric OggzMetric \endlink
++ * function is defined to translate packet positions into units such as time.
++ * See the \ref seek_api section for details.
++ *
++ * \section io Overriding the IO methods
++ *
++ * When an OGGZ handle is instantiated by oggz_open() or oggz_open_stdio(),
++ * Oggz uses stdio functions internally to access the raw data. However for
++ * some applications, the raw data cannot be accessed via stdio -- this
++ * commonly occurs when integrating with media frameworks. For such
++ * applications, you can provide Oggz with custom IO methods that it should
++ * use to access the raw data. Oggz will then use these custom methods,
++ * rather than using stdio methods, to access the raw data internally.
++ *
++ * For details, see \link oggz_io.h <oggz/oggz_io.h> \endlink.
++ *
++ * \section headers Headers
++ *
++ * oggz.h provides direct access to libogg types such as ogg_packet, defined
++ * in <ogg/ogg.h>.
++ */
++
++/**
++ * An opaque handle to an Ogg file. This is returned by oggz_open() or
++ * oggz_new(), and is passed to all other oggz_* functions.
++ */
++typedef void OGGZ;
++
++/**
++ * Create a new OGGZ object
++ * \param flags OGGZ_READ or OGGZ_WRITE
++ * \returns A new OGGZ object
++ * \retval NULL on system error; check errno for details
++ */
++OGGZ * oggz_new (int flags);
++
++/**
++ * Open an Ogg file, creating an OGGZ handle for it
++ * \param filename The file to open
++ * \param flags OGGZ_READ or OGGZ_WRITE
++ * \return A new OGGZ handle
++ * \retval NULL System error; check errno for details
++ */
++OGGZ * oggz_open (const char * filename, int flags);
++
++/**
++ * Create an OGGZ handle associated with a stdio stream
++ * \param file An open FILE handle
++ * \param flags OGGZ_READ or OGGZ_WRITE
++ * \returns A new OGGZ handle
++ * \retval NULL System error; check errno for details
++ */
++OGGZ * oggz_open_stdio (FILE * file, int flags);
++
++/**
++ * Ensure any associated io streams are flushed.
++ * \param oggz An OGGZ handle
++ * \retval 0 Success
++ * \retval OGGZ_ERR_BAD_OGGZ \a oggz does not refer to an existing OGGZ
++ * \retval OGGZ_ERR_INVALID Operation not suitable for this OGGZ
++ * \retval OGGZ_ERR_SYSTEM System error; check errno for details
++ */
++int oggz_flush (OGGZ * oggz);
++
++/**
++ * Run an OGGZ until completion, or error.
++ * This is a convenience function which repeatedly calls oggz_read() or
++ * oggz_write() as appropriate.
++ * For an OGGZ opened for reading, an OggzReadPacket or OggzReadPage callback
++ * should have been set before calling this function.
++ * For an OGGZ opened for writing, either an OggzHungry callback should have
++ * been set before calling this function, or you can use this function to
++ * write out all unwritten Ogg pages which are pending.
++ * \param oggz An OGGZ handle previously opened for either reading or writing
++ * \retval 0 Success
++ * \retval OGGZ_ERR_BAD_OGGZ \a oggz does not refer to an existing OGGZ
++ * \retval OGGZ_ERR_INVALID Operation not suitable for this OGGZ
++ * \retval OGGZ_ERR_SYSTEM System error; check errno for details
++ * \retval OGGZ_ERR_STOP_OK Operation was stopped by a user callback
++ * returning OGGZ_STOP_OK
++ * \retval OGGZ_ERR_STOP_ERR Operation was stopped by a user callback
++ * returning OGGZ_STOP_ERR
++ * \retval OGGZ_ERR_RECURSIVE_WRITE Attempt to initiate writing from
++ * within an OggzHungry callback
++ */
++long oggz_run (OGGZ * oggz);
++
++/**
++ * Set the blocksize to use internally for oggz_run()
++ * \param oggz An OGGZ handle previously opened for either reading or writing
++ * \param blocksize The blocksize to use within oggz_run()
++ * \retval 0 Success
++ * \retval OGGZ_ERR_BAD_OGGZ \a oggz does not refer to an existing OGGZ
++ * \retval OGGZ_ERR_INVALID Invalid blocksize (\a run_blocksize <= 0)
++ */
++int oggz_run_set_blocksize (OGGZ * oggz, long blocksize);
++
++/**
++ * Close an OGGZ handle
++ * \param oggz An OGGZ handle
++ * \retval 0 Success
++ * \retval OGGZ_ERR_BAD_OGGZ \a oggz does not refer to an existing OGGZ
++ * \retval OGGZ_ERR_SYSTEM System error; check errno for details
++ */
++int oggz_close (OGGZ * oggz);
++
++/**
++ * Determine if a given logical bitstream is at bos (beginning of stream).
++ * \param oggz An OGGZ handle
++ * \param serialno Identify a logical bitstream within \a oggz, or -1 to
++ * query if all logical bitstreams in \a oggz are at bos
++ * \retval 1 The given stream is at bos
++ * \retval 0 The given stream is not at bos
++ * \retval OGGZ_ERR_BAD_SERIALNO \a serialno does not identify an existing
++ * logical bitstream in \a oggz.
++ */
++int oggz_get_bos (OGGZ * oggz, long serialno);
++
++/**
++ * Determine if a given logical bitstream is at eos (end of stream).
++ * \param oggz An OGGZ handle
++ * \param serialno Identify a logical bitstream within \a oggz, or -1 to
++ * query if all logical bitstreams in \a oggz are at eos
++ * \retval 1 The given stream is at eos
++ * \retval 0 The given stream is not at eos
++ * \retval OGGZ_ERR_BAD_SERIALNO \a serialno does not identify an existing
++ * logical bitstream in \a oggz.
++ */
++int oggz_get_eos (OGGZ * oggz, long serialno);
++
++/**
++ * Query the number of tracks (logical bitstreams). When reading, this
++ * number is incremented every time a new track is found, so the returned
++ * value is only correct once the OGGZ is no longer at bos (beginning of
++ * stream): see oggz_get_bos() for determining this.
++ * \param oggz An OGGZ handle
++ * \return The number of tracks in OGGZ
++ * \retval OGGZ_ERR_BAD_SERIALNO \a serialno does not identify an existing
++ * logical bitstream in \a oggz.
++ */
++int oggz_get_numtracks (OGGZ * oggz);
++
++/**
++ * Request a new serialno, as required for a new stream, ensuring the serialno
++ * is not yet used for any other streams managed by this OGGZ.
++ * \param oggz An OGGZ handle
++ * \returns A new serialno, not already occuring in any logical bitstreams
++ * in \a oggz.
++ */
++long oggz_serialno_new (OGGZ * oggz);
++
++/**
++ * Return human-readable string representation of a content type
++ *
++ * \retval string the name of the content type
++ * \retval NULL \a content invalid
++ */
++const char *
++oggz_content_type (OggzStreamContent content);
++
++#include <oggz/oggz_off_t.h>
++#include <oggz/oggz_read.h>
++#include <oggz/oggz_stream.h>
++#include <oggz/oggz_seek.h>
++#include <oggz/oggz_write.h>
++#include <oggz/oggz_io.h>
++#include <oggz/oggz_comments.h>
++#include <oggz/oggz_deprecated.h>
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __OGGZ_H__ */

@@ -1,0 +1,54 @@
+#!/bin/sh
+
+git clone --depth 1 "https://github.com/nightingale-media-player/nightingale-deps.git"
+cd nightingale-deps
+
+date=$(git log -1 --format=%ci | head -c10 | sed -e 's/-//g')
+
+# remove all source files except xulrunner, taglib and sqlite
+rm -rf $(ls -1 -d */ | grep -v xulrunner | grep -v taglib | grep -v sqlite)
+
+# remove non-free and unused firefox branding files
+rm -rf xulrunner-1.9.2/mozilla/other-licenses/branding/firefox
+
+# Contains RFC documentation. oggz.h will be re-added via quilt patch.
+rm -f xulrunner-1.9.2/mozilla/media/liboggz/include/oggz/oggz.h
+
+# replace non-free valid w3c icon with transparent dummy
+cat <<EOF | base64 -d > xulrunner-1.9.2/mozilla/build/pgo/blueprint/valid.png
+iVBORw0KGgoAAAANSUhEUgAAAFgAAAAfCAYAAABjyArgAAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
+WXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wEXCS8RqG9h3AAAABl0RVh0Q29tbWVudABDcmVhdGVk
+IHdpdGggR0lNUFeBDhcAAACOSURBVGje7dgxCoAwDAXQVnr/IzcuCi4iomJJ319d9BHTpDUiinyX
+BQFgwAIYcNa0BN9QL57Hj+8UTY19ktAitIj71eKQM0UIYMACGDDgLFueOfgBZB1hXm5JK7Ye7wNK
+KV2LeH+r22H7y3/GlBUcG0acQP+2hi9Jq3eYZLyuHAraHAwYsAAGDFgAA54xK97pFT4C4jK6AAAA
+AElFTkSuQmCC
+EOF
+
+# OSX bundles
+rm -rf xulrunner-1.9.2/mozilla/toolkit/mozapps/update/src/updater/macbuild \
+  xulrunner-1.9.2/mozilla/toolkit/crashreporter/client/macbuild \
+  xulrunner-1.9.2/mozilla/xpcom/tests/unit/data/SmallApp.app \
+  xulrunner-1.9.2/mozilla/xpcom/tests/unit/data/presentation.key \
+  xulrunner-1.9.2/mozilla/plugin/oji/JEP/JavaEmbeddingPlugin.bundle \
+  xulrunner-1.9.2/mozilla/plugin/oji/JEP/MRJPlugin.plugin/Contents
+
+# binaries
+rm -f `find . -name *.a` `find . -name *.o` `find . -name *.exe` \
+  `find . -name *.dll` `find . -name *.class` `find . -name *.jar` \
+  xulrunner-1.9.2/mozilla/other-licenses/7zstub/firefox/7zSD.sfx
+
+# files that otherwise trigger Lintian
+rm -f xulrunner-1.9.2/mozilla/js/ctypes/libffi/ltconfig \
+  xulrunner-1.9.2/mozilla/js/src/trace-test/lib/mandelbrot-results.js
+
+# .orig backup files will be ignored by debuild anyway
+rm -f `find . -name *.orig`
+
+# VCS directory
+rm -rf .git
+
+cd ..
+mv nightingale-deps nightingale-deps-${date}
+
+tar cvfJ nightingale-deps_${date}.orig.tar.xz nightingale-deps-${date}
+

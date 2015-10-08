@@ -1,0 +1,41 @@
+#!/bin/sh -e
+
+git clone --depth 1 "https://github.com/nightingale-media-player/nightingale-hacking.git"
+wget -O minimizetotray.tar.gz "https://github.com/darealshinji/minimizetotrayplus/archive/master.tar.gz"
+
+tar xfvz minimizetotray.tar.gz
+
+cd nightingale-hacking
+mv debian debian-upstream
+
+date=$(git log -1 --format=%ci | head -c10 | tr -d '-')
+
+# add githash to sbBuildInfo.mk.in
+githash=$(git describe --long --always --dirty --abbrev=10)
+sed -i "s|\`git describe --long --always --dirty --abbrev=10\`|$githash|" build/sbBuildInfo.mk.in
+
+## clean up
+# make source package smaller
+find . -name *.mp3 -delete
+# delete Windows binaries
+rm -r tools/win32 vcproj
+# delete Java scripts that trigger Lintian
+rm -r extensions/lastfm tools/tracemalloc
+
+# copy minimizetotray extension
+cp -r ../minimizetotrayplus-master/src extensions/minimizetotray
+
+# download additional extensions
+wget "https://github.com/nightingale-media-player/nightingale-addons/archive/master.tar.gz"
+tar xfvz master.tar.gz
+rm master.tar.gz
+mv nightingale-addons-master addons
+cd ..
+
+# create tarball
+tar cvfJ nightingale_1.13+${date}.orig.tar.xz nightingale-hacking
+
+# clean up
+rm minimizetotray.tar.gz
+rm -r nightingale-hacking minimizetotrayplus-master
+
