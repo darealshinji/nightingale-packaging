@@ -25,6 +25,7 @@ Build-Depends: debhelper (>= 9),
                libxt6,
                nightingale-deps,
                unzip,
+               xz-utils,
                zip
 Standards-Version: 3.9.6
 Homepage: http://www.getnightingale.com

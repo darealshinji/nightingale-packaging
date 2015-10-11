@@ -1,23 +1,146 @@
-nightingale (1.13a-1) unstable; urgency=medium
+nightingale (1.13+20150720-3~trusty) trusty; urgency=low
 
-  * User Agent switched to "Nightingale/Version (Build ID)"
-  * Improved libnotify extension
-  * Added MPRIS 1 & 2 support
-  * Added GNOME Media Keys support
-  * Added Linux Desktop Entry Actions
-  * Added SEEKED Mediacore Event
-  * Display EQ Band Values
-  * Fixed Application icon sometimes not visible
-  * Fixed mashTape Flickr tab
-  * Fixed weird file permissions when using Sync
-  * Added Command Line Playback Controls
-  * Added Equalizer Presets
-  * Fixed Clearing Private Data
-  * Migrated SHOUTcast to official API
+  * Revert libvisual hack: the deps in the PPA are built with the memalign
+    patch, so we don't need this anymore.
+  * Add missing comma in the MPRIS service
 
- -- Martin Giger <zm.redaktion@gmail.com>  Sun, 03 Aug 2014 15:27:11 +0200
+ -- Marshall Banana <djcj@gmx.de>  Mon, 03 Aug 2015 14:30:52 +0200
 
-nightingale (1.11.0-1) unstable; urgency=low
+nightingale (1.13+20150720-2~trusty) trusty; urgency=low
+
+  * No-changes rebuild against updated nightingale-deps package
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 22 Jul 2015 16:50:10 +0200
+
+nightingale (1.13+20150720-1~trusty) trusty; urgency=low
+
+  * Current Git snapshot
+
+ -- Marshall Banana <djcj@gmx.de>  Mon, 20 Jul 2015 14:39:55 +0200
+
+nightingale (1.13+20150303-2~trusty) trusty; urgency=low
+
+  * Fixed playlist generation issue:
+    If the playlist generation path contained "..", playlists contained a wrong
+    directory name. Thanks to 3x5 for reporting the bug in the forums
+    <http://forum.getnightingale.com/thread-1372.html>.
+    rsjtdrjgfuzkfg's commit on Github: http://tinyurl.com/mkphuqa
+
+ -- Marshall Banana <djcj@gmx.de>  Mon, 16 Mar 2015 17:09:37 +0100
+
+nightingale (1.13+20150303-1~trusty) trusty; urgency=low
+
+  * Current Git snapshot
+  * Refresh patches
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 04 Mar 2015 00:10:51 +0100
+
+nightingale (1.13+20150201-1~trusty) trusty; urgency=low
+
+  * Current Git snapshot
+
+ -- Marshall Banana <djcj@gmx.de>  Sat, 28 Feb 2015 11:55:43 +0100
+
+nightingale (1.13+20141127-3~trusty) trusty; urgency=low
+
+  * app/content/bindings/conditions.xml:
+    fix undeclared variable in strict context
+
+ -- Marshall Banana <djcj@gmx.de>  Sun, 08 Feb 2015 02:13:12 +0100
+
+nightingale (1.13+20141127-2~trusty) trusty; urgency=low
+
+  * Build jars
+  * Rename package 'ngale-unity-addon' to 'nightingale-unity-integration'
+
+ -- Marshall Banana <djcj@gmx.de>  Fri, 23 Jan 2015 07:58:16 +0100
+
+nightingale (1.13+20141127-1~trusty) trusty; urgency=low
+
+  * Current Git snapshot
+  * Add equalizerpane addon
+
+ -- Marshall Banana <djcj@gmx.de>  Thu, 27 Nov 2014 17:44:27 +0100
+
+nightingale (1.13a+20141103-3~trusty) trusty; urgency=low
+
+  * Make nightingale depend on 'nightingale-common (= ${source:Version})'
+
+ -- Marshall Banana <djcj@gmx.de>  Fri, 07 Nov 2014 05:21:43 +0100
+
+nightingale (1.13a+20141103-2~trusty) trusty; urgency=low
+
+  * Rebuild against new xulrunner build
+  * Add more files to nightingale-common package
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 05 Nov 2014 17:06:30 +0100
+
+nightingale (1.13a+20141103-1~trusty) trusty; urgency=medium
+
+  * Build nightingale-common package
+  * Reduce Lintian warnings
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 05 Nov 2014 02:36:49 +0100
+
+nightingale (1.13a+20141031-2~trusty) trusty; urgency=low
+
+  * Remove eqpresetsplus extension
+
+ -- Marshall Banana <djcj@gmx.de>  Sat, 01 Nov 2014 03:28:11 +0100
+
+nightingale (1.13a+20141031-1~trusty) trusty; urgency=low
+
+  * Current Git snapshot
+
+ -- Marshall Banana <djcj@gmx.de>  Sat, 01 Nov 2014 02:03:39 +0100
+
+nightingale (1.13a+20141025-1~trusty) trusty; urgency=low
+
+  * Current Git snapshot
+
+ -- Marshall Banana <djcj@gmx.de>  Sat, 25 Oct 2014 23:11:46 +0200
+
+nightingale (1.12.2a+20140524.1-2~trusty) trusty; urgency=low
+
+  * Bugfix in Xulrunner:
+    Mozilla Bug #566017 - Jemalloc's posix_memalign() asserts that size != 0
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 13 Aug 2014 12:09:54 +0200
+
+nightingale (1.12.2a+20140524.1-1~trusty) trusty; urgency=low
+
+  * Use a cleaner rebuild of Xulrunner
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 23 Jul 2014 04:40:26 +0200
+
+nightingale (1.12.2a+20140524-3~trusty) trusty; urgency=low
+
+  * Add Lintian overrides for libnss3.so and libsqlite3.so
+
+ -- Marshall Banana <djcj@gmx.de>  Fri, 27 Jun 2014 22:22:21 +0200
+
+nightingale (1.12.2a+20140524-2~trusty) trusty; urgency=low
+
+  * Update Shoutcast extension for new API key and add it to the package
+  * Update NewTab extension
+  * Better manpage layout
+  * Improve installation via Makefile targets
+
+ -- Marshall Banana <djcj@gmx.de>  Fri, 27 Jun 2014 15:41:39 +0200
+
+nightingale (1.12.2a+20140524-1~trusty1) trusty; urgency=low
+
+  * Current Git snapshot
+
+ -- Marshall Banana <djcj@gmx.de>  Sat, 24 May 2014 16:01:54 +0200
+
+nightingale (1.12.2) unstable; urgency=low
+
+  * New upstream version
+
+ -- Martin Giger <zm.redaktion@gmail.com>  Mon, 10 Feb 2014 19:12:05 +0100
+
+nightingale (1.11.0) unstable; urgency=low
 
   * New upstream version
 

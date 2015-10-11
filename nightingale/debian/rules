@@ -30,7 +30,7 @@ override_dh_auto_clean:
 override_dh_auto_configure:
 
 override_dh_auto_build:
-	cd dependencies && tar xvf /usr/lib/nightingale-deps/linux-*-lintian-release.tar.lzma
+	cd dependencies && tar xvfJ /usr/lib/nightingale-deps/linux-*-lintian-release.tar.xz
 	$(foreach OPTION,$(ac_add_options),echo 'ac_add_options $(OPTION)' >> nightingale.config ;)
 
 	dh_auto_build

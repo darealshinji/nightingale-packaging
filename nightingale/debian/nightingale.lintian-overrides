@@ -1,2 +1,1 @@
-# There's some incompatibility with the system's sqlite library.
-nightingale binary: embedded-library usr/lib/nightingale/components/sbDBEngine.so: sqlite
+embedded-library
