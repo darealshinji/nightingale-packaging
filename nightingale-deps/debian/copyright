@@ -7,7 +7,7 @@ License: public-domain
  The author disclaims copyright to this source code.
 
 Files: taglib/*
-Copyright: 2002-2012 Scott Wheeler <wheeler@kde.org>
+Copyright: 2002-2015 Scott Wheeler <wheeler@kde.org>
                      Lukas Lalinsky <lalinsky@gmail.com>
                      Ismael Orenstein <orenstein@kde.org>
                      Allan Sandfeld Jensen <kde@carewolf.org>
@@ -36,7 +36,7 @@ License: LGPL-2.1+ or MPL-1.1
  http://www.mozilla.org/MPL/
 
 Files: xulrunner-1.9.2/*
-Copyright: 2013-2014 John Murray
+Copyright: 2013-2015 John Murray
            2012-2013 Matt Parnell
                      Mozilla Corporation
 License: MPL-1.1 or GPL-2+ or LGPL-2.1+

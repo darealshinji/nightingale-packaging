@@ -2,28 +2,19 @@
 
 LINUX = linux-$(shell uname -m)
 
-debug = \
-$(LINUX)/mozilla-1.9.2/debug \
-$(LINUX)/sqlite/debug \
-$(LINUX)/taglib/debug \
-$(LINUX)/xulrunner-1.9.2/debug
-
-release = \
-$(LINUX)/mozilla-1.9.2/release \
-$(LINUX)/sqlite/release \
-$(LINUX)/taglib/release \
-$(LINUX)/xulrunner-1.9.2/release
-
 
 %:
-	dh ${@} --parallel
+	dh ${@}
 
 override_dh_auto_clean:
 	dh_auto_clean
-	rm -f *.tar.lzma
+	rm -f *.tar.xz
 
 override_dh_auto_build:
 	./lint-build.sh
-	tar cvf - $(debug) | lzma > $(LINUX)-lintian-debug.tar.lzma
-	tar cvf - $(release) | lzma > $(LINUX)-lintian-release.tar.lzma
+	tar cvfJ $(LINUX)-lintian-release.tar.xz \
+		$(LINUX)/mozilla-1.9.2/release \
+		$(LINUX)/sqlite/release \
+		$(LINUX)/taglib/release \
+		$(LINUX)/xulrunner-1.9.2/release
 

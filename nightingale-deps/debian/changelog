@@ -1,5 +1,57 @@
-nightingale-deps (20150123) unstable; urgency=low
+nightingale-deps (20151010-1~trusty) trusty; urgency=low
+
+  * New git snapshop
+  * Skip debug builds
+
+ -- Marshall Banana <djcj@gmx.de>  Sun, 11 Oct 2015 23:16:20 +0200
+
+nightingale-deps (20150722-1~trusty) trusty; urgency=medium
+
+  * New git snapshot
+  * Upgrade sqlite to version 3.8.10.2
+  * Upgrade taglib to version 1.9.1-281-ge90b5e5
+  * Change default buildflags
+  * Bump Standards-Version to 3.9.6
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 22 Jul 2015 16:29:42 +0200
+
+nightingale-deps (20150228-1~trusty) trusty; urgency=medium
+
+  * New git snapshot
+  * Upgrade sqlite to version 3.8.8.2
+  * Upgrade taglib to version 1.9.1-186-g8fccaf3
+  * Remove more unneeded files
+  * Link against more system libraries
+
+ -- Marshall Banana <djcj@gmx.de>  Sat, 28 Feb 2015 12:10:22 +0100
+
+nightingale-deps (20141125-1~trusty1) trusty; urgency=low
+
+  * New git snapshot
+  * Remove unnecessary files
+  * Build jars
+
+ -- Marshall Banana <djcj@gmx.de>  Fri, 23 Jan 2015 02:43:14 +0100
+
+nightingale-deps (20140722-3~trusty2) trusty; urgency=low
+
+  * Remove date from archive names
+  * Don't build jars
+  * Disable Ogg codecs support
+  * Build separate debug package
+  * Install archives into /usr/lib/nightingale-deps
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 05 Nov 2014 05:19:39 +0100
+
+nightingale-deps (20140722-2~trusty) trusty; urgency=low
+
+  * Fix Mozilla Bug #566017:
+    Jemalloc's posix_memalign() asserts that size != 0
+
+ -- Marshall Banana <djcj@gmx.de>  Wed, 13 Aug 2014 11:48:22 +0200
+
+nightingale-deps (20140722-1~trusty1) trusty; urgency=low
 
   * Initial release
 
- -- Marshall Banana <djcj@gmx.de>  Fri, 23 Jan 2015 11:48:08 +0100
+ -- Marshall Banana <djcj@gmx.de>  Wed, 23 Jul 2014 05:17:10 +0200
