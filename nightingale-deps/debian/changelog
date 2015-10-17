@@ -1,4 +1,4 @@
-nightingale-deps (20151010-1~trusty) trusty; urgency=low
+nightingale-deps (20151010-1~wily2) wily; urgency=low
 
   * New git snapshop
   * Skip debug builds

@@ -1,3 +1,12 @@
+nightingale (1.13+20151005-1~trusty) trusty; urgency=low
+
+  * Current Git snapshot
+  * Replace nightingale-unity-integration with a virtual package.
+    Nightingale is integrated into Unity pretty well. Installing the addon
+    will make it more difficult to close Nightingale.
+
+ -- Marshall Banana <djcj@gmx.de>  Mon, 12 Oct 2015 16:05:48 +0200
+
 nightingale (1.13+20150720-3~trusty) trusty; urgency=low
 
   * Revert libvisual hack: the deps in the PPA are built with the memalign
