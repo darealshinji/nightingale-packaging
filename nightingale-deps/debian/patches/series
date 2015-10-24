@@ -1,2 +1,3 @@
-oggz_h_no_rfc.patch
 no-debug.patch
+no-shlibsign.patch
+oggz_h_no_rfc.patch

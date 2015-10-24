@@ -8,14 +8,12 @@ export CXXFLAGS = \
 	-Wno-unused-but-set-variable \
 	-I/usr/include/nspr \
 	$(shell dpkg-buildflags --get CPPFLAGS)
-export LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS) -Wl,--as-needed
 
 ac_add_options = \
 	--with-taglib-source=packaged \
 	--enable-libnotify \
-	--enable-unity-integration \
 	--enable-system-nspr \
-	--enable-jars=no \
+	--enable-jars=yes \
 	--enable-official
 
 
@@ -45,10 +43,9 @@ override_dh_auto_test:
 override_dh_auto_install:
 	dh_auto_install
 
-	rm -f debian/tmp/usr/lib/nightingale/extensions/unity-integration@lookingman.org/README
 	cd debian/tmp/usr/lib/nightingale/xulrunner && \
 		rm -rf chrome ../chrome dictionaries libnspr4.so LICENSE README.txt res
-	cp -f debian/nightingale.links.in.in debian/nightingale.links.in
+	cp -f debian/nightingale.links.in debian/nightingale.links
 
 	# install pictures and jars into /usr/share and replace
 	# them with symbolic links
@@ -68,23 +65,14 @@ override_dh_auto_install:
 		target=$$(echo $$out | sed -e "s|$$prefix|/usr|") ;\
 		mkdir -v -p $$(dirname $$out) ;\
 		mv -v $$f $$(dirname $$out) ;\
-		echo $$target'      '$$in >> debian/nightingale.links.in ;\
+		echo $$target'      '$$in >> debian/nightingale.links ;\
 	done
 
-	grep 'unity-integration@lookingman.org' debian/nightingale.links.in > debian/nightingale-unity-integration.links
-	grep -v 'unity-integration@lookingman.org' debian/nightingale.links.in > debian/nightingale.links
-
-override_dh_install:
-	dh_install -pnightingale-unity-integration
-	dh_install --remaining-packages -Xunity-integration@lookingman.org
-
 override_dh_installdocs:
-	dh_installdocs -pnightingale --link-doc=nightingale-common
-	dh_installdocs --remaining-packages
+	dh_installdocs --link-doc=nightingale-common
 
 override_dh_clean:
-	dh_clean debian/nightingale.links debian/nightingale.links.in \
-		debian/nightingale-unity-integration.links
+	dh_clean debian/nightingale.links
 
 override_dh_shlibdeps:
 	dh_shlibdeps -Lnightingale -l/usr/lib/nightingale/xulrunner

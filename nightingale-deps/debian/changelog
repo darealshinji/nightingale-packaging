@@ -1,9 +1,9 @@
-nightingale-deps (20151010-1~wily2) wily; urgency=low
+nightingale-deps (20151012-1~trusty) trusty; urgency=low
 
   * New git snapshop
   * Skip debug builds
 
- -- Marshall Banana <djcj@gmx.de>  Sun, 11 Oct 2015 23:16:20 +0200
+ -- Marshall Banana <djcj@gmx.de>  Fri, 23 Oct 2015 19:56:47 +0200
 
 nightingale-deps (20150722-1~trusty) trusty; urgency=medium
 

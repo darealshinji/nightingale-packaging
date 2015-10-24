@@ -4,6 +4,7 @@ nightingale (1.13+20151005-1~trusty) trusty; urgency=low
   * Replace nightingale-unity-integration with a virtual package.
     Nightingale is integrated into Unity pretty well. Installing the addon
     will make it more difficult to close Nightingale.
+  * Undo reverting libvisual hack
 
  -- Marshall Banana <djcj@gmx.de>  Mon, 12 Oct 2015 16:05:48 +0200
 
